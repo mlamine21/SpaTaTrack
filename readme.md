@@ -45,7 +45,7 @@ Construct the 3D scene (objects, cameras) by reading the config.json file :
 
 Note : We defined a parsing system that allows to use variables in the config file. A variable starts with the character "$", and it is possible to access a field of the variable using a string between brackets (e.g. [field]), and an index using a number between brackets (e.g. [0]). 
 
-Example : $scene[size][1] -> field "size" of the json, field "screen" of the object "scene", index 1 of the list. 
+Example : $scene[size][1] -> field "scene" of the json, field "size" of the object "scene", index 1 of the list. 
 
 #### Participant (`participant.py`)
 Data model for tracked individuals with temporal data:
