@@ -63,7 +63,7 @@ class TemplateView:
         
       
     def update_view(self, participant, frame=0, refresh=True, overlay=True):
-        """Update the view by drawing the table."""
+        
         # if self.display:
         #     if(refresh):
         #         self.clean_image()  # Reset the image to white

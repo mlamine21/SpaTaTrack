@@ -7,7 +7,7 @@ import time
 
 
 class FileVideoStream:
-    def __init__(self, path, queueSize=128):
+    def __init__(self, path, queueSize=1):
         # initialize the file video stream along with the boolean
         # used to indicate if the thread should be stopped or not
         os.environ[ "OPENCV_FFMPEG_CAPTURE_OPTIONS"] = "video_codec;h264_cuvid"
@@ -61,20 +61,3 @@ class FileVideoStream:
         self.stopped = True
         self.stream.release()
 
-if __name__ == "__main__":
-    import sys
-    print(cv2.CAP_DSHOW)
-
-    fvs = FileVideoStream(0).start()
-    if not fvs.stream.isOpened():
-        print("Error: Could not open video.")
-        sys.exit()
-    while(fvs.more()):
-        print("hzere")
-        frame = fvs.read()
-        print(frame)
-        # process the frame (e.g., display it, save it, etc.)
-        cv2.imshow("Frame", frame)
-        if cv2.waitKey(1) & 0xFF == ord("q"):
-            break
-    fvs.stop()

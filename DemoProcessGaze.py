@@ -48,9 +48,11 @@ combined_image = np.vstack((side_view.image, top_view.image, side_view_other.ima
 
 # The video streams specification is stored in a dict
 # Each field represents a stream, and should be named as one of the cameras in the config.json file
+# In this example we used a computer with an embedded camera (stream 0), and plugged in two additional cameras (stream 1 and stream 2).
+# It is possible to process videos instead of camera streams, by directly writing the path to the video file(s) 
 video_streams = {
-    "user1": 0,
-    "user2": "video.mkv"
+    "user1": 1, 
+    "user2": 2
 }
 gaze_processors = {}
 users = {}
@@ -101,7 +103,11 @@ while getState(gaze_processors)!=False:
 
     # Update each participant with the new head position and gaze vector
     for stream, gp in gaze_processors.items():
-        users[stream].updateFrame(head_position=frame[stream][0], gaze_vector=frame[stream][1])
+        if(int(stream) == 0):
+            users[stream].updateFrame(head_position=frame[stream][0], gaze_vector=frame[stream][1])
+        else:
+            gv = [frame[stream][1][0], frame[stream][1][1], frame[stream][1][2]]
+            users[stream].updateFrame(head_position=frame[stream][0], gaze_vector=gv)
     
     # Compute static views before adding dynamic elements (participants)
     top_view.image = top_view.static_view.copy()
@@ -120,6 +126,7 @@ while getState(gaze_processors)!=False:
         # If no consensus, default to "autre"
         if count < 2:
             target = "autre"
+        participants[i].updateTargets(target)
 
     combined_image = np.vstack((side_view.image, top_view.image, side_view_other.image))
     # print(gp.fvs.last_frame)
@@ -141,6 +148,9 @@ while getState(gaze_processors)!=False:
         print(f"FPS: {fps:.2f}")
         frame_count = 0
         start_time = curr_time
+
+for i in range(len(participants)):
+    participants[i].toCsv(participants[i].id+'.csv')
 
 cv2.destroyAllWindows()
 for gp in gaze_processors.values():

@@ -54,7 +54,7 @@ class GazeProcessor(Thread):
         return self.last_frame
 
     def run(self):
-        self.fvs = FileVideoStream(self.stream).start()
+        self.fvs = FileVideoStream(self.stream, queueSize=1).start()
         
         if not self.fvs.stream.isOpened():
             raise ValueError("Failed to initialize video stream.")

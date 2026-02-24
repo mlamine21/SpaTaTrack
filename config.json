@@ -12,9 +12,9 @@
             "shape": "{'(0;1)': 'rectangle', '(0;2)': 'rectangle', '(1;2)': 'rectangle'}"
         },
         "user2":{
-            "position": "[-$objects[screen][size][0]/2,  -($scene[size][1]/2-$objects[table][size][1]-$objects[screen][size][1]-$cameras[user2][size][1]/2),0]",
+            "position": "[-$objects[screen][size][0]/2,  -($scene[size][1]/2-$objects[table][size][1]-$cameras[user2][size][1]/2),-0.1]",
             "size":"[0.05, 0.03, 0.03]",
-            "angle":"[0, 90, -15]",
+            "angle":"[0, 90, -30]",
             "color":"$participant_colors[user2]",
             "shape": "{'(0;1)': 'rectangle', '(0;2)': 'rectangle', '(1;2)': 'rectangle'}"
         }
@@ -29,14 +29,14 @@
     "objects":{
         "table":{
             "position":"[0, -$scene[size][1]/2+$objects[table][size][1]/2, 0]",
-            "size":"[0.7, 0.05, 0.2]",
+            "size":"[1, 0.05, 0.6]",
             "color":"(140, 180, 210)",
             "shape":"{'(0;1)': 'rectangle', '(0;2)': 'rectangle', '(1;2)': 'rectangle'}",
             "angle" : "[0,0,0]"
         },
         "screen":{
             "position":"[0, -$scene[size][1]/2+$objects[table][size][1]+$objects[screen][size][1]/2, 0]",
-            "size":"[0.5, 0.3, 0.05]",
+            "size":"[0.45, 0.3, 0.05]",
             "color":"(200, 200, 200)",
             "shape":"{'(0;1)': 'rectangle', '(0;2)': 'rectangle', '(1;2)': 'rectangle'}",
             "angle" : "[0,0,0]"

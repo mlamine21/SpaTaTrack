@@ -1,5 +1,5 @@
-from ptgaze.common import Face
 import numpy as np
+import csv
 class Participant():
   
   def __init__(self, id, head_position, gaze_vector):
@@ -13,6 +13,7 @@ class Participant():
     self.id = id
     self.head_position = head_position
     self.gaze_vector = gaze_vector
+    self.targets = []
     self.camera = None  # Placeholder for camera object
     self.last_known_position_frame = None
     self.offset_y_gaze_vec = 0
@@ -31,6 +32,8 @@ class Participant():
     
       return len(self.head_position)-1 
 
+  def updateTargets(self, target):
+    self.targets.append(target)
 
   def getHeadPosition(self, frame=0):
     try:
@@ -52,3 +55,12 @@ class Participant():
       return [self.gaze_vector[frame][0]*10, -self.gaze_vector[frame][1]*10 + self.offset_y_gaze_vec, -self.gaze_vector[frame][2]*10]
     except (TypeError, IndexError):
       return [None, None, None]
+    
+  def toCsv(self, path):
+    header = ['head_x', 'head_y', 'head_z', 'gaze_x', 'gaze_y', 'gaze_z', 'target']
+    with open(path, 'w') as csvfile:
+      writer = csv.writer(csvfile)
+      writer.writerow(header)
+      for i in range(len(self.head_position)):
+        line = self.head_position[i] + self.gaze_vector[i] + [self.targets[i]]
+        writer.writerow(line)
