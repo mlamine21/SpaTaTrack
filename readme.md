@@ -57,6 +57,11 @@ Data model for tracked individuals with temporal data:
 ### Ray-Box Intersection for Gaze Targeting
 The system determines what objects participants are looking at using 3D ray-box intersection:
 
+### Illustration 
+
+![illustration](illustration.PNG) 
+
+Illustration of the visual interface of the SpaTaTrack tool with 4 cameras (offline mode with existing video files). To the left, the videos associated to each camera. The id of each participant ("bleu", "rouge", "vert" and "jaune") is written in the bottom left corner of each video. To the right, the visualization of the gaze vectors during the interaction in the three different 2D views (from top to bottom, front view, top view and side view). Each participant is represented with a colored circle, and associated to a zone (translucent colored box). The gaze target (id of the target participant or object name) of each participant is written in black next to their respective head in the top view. In this example : the participant "bleu" (blue circle) is looking at the participant "jaune" (translucent yellow zone). The participant "rouge" (red circle) is looking at the participant "jaune" (translucent yellow zone). The participant "jaune" (yellow circle) is looking at the participant "bleu" (translucent blue zone). The participant "vert" (green circle) is looking at the table object (light brown circle in the top view, and light brown rectangle in the front and side views).
 
 ### Known issues 
 
