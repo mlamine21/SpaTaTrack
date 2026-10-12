@@ -5,6 +5,7 @@ from roomConfiguration import RoomConfiguration
 
 
 class TemplateView:
+    HIGHLIGHT_COLOR = (0, 255, 0)  # Green color for highlighting
     def __init__(self, scale_factor=500, room_config=None, x_axis = 1, y_axis=2,z_axis=3, display=True):
         if(room_config is not None):
             self.room_config = room_config
@@ -98,6 +99,8 @@ class TemplateView:
         size=self.room_config.objects[name]['size'].copy()
         angle=self.room_config.objects[name]['angle'].copy()
         shape=self.room_config.objects[name]['shape'].copy()
+        
+        highlight=self.room_config.objects[name]['highlight'] if 'highlight' in self.room_config.objects[name] else False
 
         for s in shape:
             axis = [int(s[1]), int(s[3])]
@@ -138,8 +141,12 @@ class TemplateView:
             
             if shape == 'rectangle':
                 cv2.drawContours(self.image, [np.array(rpoints).astype(int)], 0, color, -1, cv2.LINE_AA)
+                if(highlight):
+                    cv2.drawContours(self.image, [np.array(rpoints).astype(int)], 0, self.HIGHLIGHT_COLOR, 2, cv2.LINE_AA)
             elif shape == 'circle':
                 cv2.circle(self.image, (x, y), size_x_px // 2, color, -1)
+                if(highlight):
+                    cv2.circle(self.image, (x, y), size_x_px // 2, self.HIGHLIGHT_COLOR, 2)
 
     
     
@@ -167,6 +174,7 @@ class TemplateView:
             head = self.rotate_point(head, center=np.array(participant.camera["position"]), angle_deg=participant.camera["angle"])
 
             head_x, head_y,head_z = self.getViewObjectPosition(head)
+
             try:
                 if self.display:
                     # print(head_x, head_y, head_z)
@@ -207,6 +215,7 @@ class TemplateView:
         size = zone['size']
         x, y, z = self.getViewObjectPosition(position)
         size_x_px, size_y_px, size_z_px = self.getViewObjectSize(size)
+        
         if(overlay):
             # Draw filled rectangle on overlay
             cv2.rectangle(overlay_image, 
@@ -237,6 +246,9 @@ class TemplateView:
 
         for object_name in objects_zones:
             object = objects_zones[object_name]
+            if None in object['position'] or None in object['size']:
+                # print("Warning: Object {} has None in position or size, skipping.".format(object_name))
+                continue
             plane, intersection = self.intersect_ray_with_box(ray_origin=np.array(ray_origin),
                                                     ray_dir=np.array(ray_dir),
                                                     box_center=np.array(self.getViewObjectPosition(object['position'])),

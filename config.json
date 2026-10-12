@@ -7,7 +7,7 @@
         "user1":{
             "position": "[0, -($scene[size][1]/2-$objects[table][size][1]-$objects[screen][size][1]-$cameras[user1][size][1]/2), -$objects[screen][size][2]/2]",
             "size":"[0.05, 0.03, 0.03]",
-            "angle":"[15, 0, 0]",
+            "angle":"[0, 0, 0]",
             "color":"$participant_colors[user1]",
             "shape": "{'(0;1)': 'rectangle', '(0;2)': 'rectangle', '(1;2)': 'rectangle'}"
         },

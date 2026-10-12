@@ -26,7 +26,12 @@ def getState(gaze_processors):
             if not running:
                 mask.append(stream)
         return mask
-    
+
+def computeStaticViews():
+    top_view.computeStaticView()
+    side_view.computeStaticView()
+    side_view_other.computeStaticView()
+
 # Define scale factor for the views, the higher the scale factor, the larger the image (heavier processing)
 scale_factor=200
 
@@ -37,9 +42,7 @@ top_view = TopView(scale_factor=scale_factor, room_config=room_config)
 side_view = SideView( scale_factor=scale_factor, room_config=room_config)
 side_view_other = SideViewOther(scale_factor=scale_factor, room_config=room_config)
 
-top_view.computeStaticView()
-side_view.computeStaticView()
-side_view_other.computeStaticView()
+computeStaticViews()
 
 combined_image = np.vstack((side_view.image, top_view.image, side_view_other.image))
 
@@ -51,8 +54,8 @@ combined_image = np.vstack((side_view.image, top_view.image, side_view_other.ima
 # In this example we used a computer with an embedded camera (stream 0), and plugged in two additional cameras (stream 1 and stream 2).
 # It is possible to process videos instead of camera streams, by directly writing the path to the video file(s) 
 video_streams = {
-    "user1": 1, 
-    "user2": 2
+    "user1": 0, 
+    # "user2": 2
 }
 gaze_processors = {}
 users = {}
@@ -87,6 +90,8 @@ while(not ready):
 for gp in gaze_processors.values():
     gp.continue_processing = True
 
+highlighted = False
+
 frame_count = 0
 start_time = time.time()
 while getState(gaze_processors)!=False:
@@ -110,9 +115,10 @@ while getState(gaze_processors)!=False:
             users[stream].updateFrame(head_position=frame[stream][0], gaze_vector=gv)
     
     # Compute static views before adding dynamic elements (participants)
-    top_view.image = top_view.static_view.copy()
-    side_view.image = side_view.static_view.copy()
-    side_view_other.image = side_view_other.static_view.copy()         
+    # top_view.image = top_view.static_view.copy()
+    # side_view.image = side_view.static_view.copy()
+    # side_view_other.image = side_view_other.static_view.copy()  
+    computeStaticViews()       
     for i in range(len(participants)):
         # Extract new position in each view for each participant, and retrieve target for each view
         target_top = top_view.update_view(participants[i], frame=len(participants[i].head_position)-1, refresh=False, overlay=True)
@@ -127,6 +133,32 @@ while getState(gaze_processors)!=False:
         if count < 2:
             target = "autre"
         participants[i].updateTargets(target)
+    
+    participants.append(Participant(id="dummy", head_position=[1,2,3], gaze_vector=[1,2,3]))
+    participants[-1].targets.append("screen")  # Add a participant for "autre" target
+
+    ################################
+    # Check if all participants are looking at the same target
+    
+    all_targets = [p.targets[-1] for p in participants]
+    if len(set(all_targets)) == 1:
+        print(f"All participants are looking at the same target: {all_targets[0]}")
+        # Highlight the target in green
+        if not highlighted:
+            room_config.highlightObject(all_targets[0], (0, 255, 0))    
+            # computeStaticViews()
+            highlighted = True
+    else:
+        if highlighted:
+            print("Participants are looking at different targets.")
+            # Unhighlight all objects
+            room_config.unhighlightObjects()
+            # computeStaticViews()
+            highlighted = False
+    
+    participants.pop()  # Remove the dummy participant
+    
+
 
     combined_image = np.vstack((side_view.image, top_view.image, side_view_other.image))
     # print(gp.fvs.last_frame)

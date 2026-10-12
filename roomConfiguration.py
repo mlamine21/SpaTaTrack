@@ -27,6 +27,26 @@ class RoomConfiguration():
             for key in object.keys():
                 val = self.getFieldValue(object[key])
                 self.objects[name][key] = val
+            self.objects[name]['highlight'] = False
+
+    def highlightObject(self, object_name, color):
+        """
+        Highlight an object in the room configuration.
+        
+        :param object_name: Name of the object to change color.
+        :param color: New color as a tuple (R, G, B).
+        """
+        if object_name in self.objects:
+            self.objects[object_name]["highlight"] = True
+        else:
+            print(f"Object {object_name} not found in room configuration.")
+
+    def unhighlightObjects(self):
+        """
+        Unhighlight all objects in the room configuration.
+        """
+        for name in self.objects:
+            self.objects[name]["highlight"] = False
         
     def initCameras(self):
         for name in self.config["cameras"]:
@@ -43,7 +63,7 @@ class RoomConfiguration():
         zone_size = self.getFieldValue(self.config["zones"]["size"])
         for name in self.config["cameras"]:
             self.zones[name] = {
-                "position" : [0,0,0], # On initialise la position de la zone à (0,0,0) mais elle va être modifiée pour suivre la position du visage du participant correspondant à la caméra avec le même id
+                "position" : [None,None,None], # On initialise la position de la zone à (0,0,0) mais elle va être modifiée pour suivre la position du visage du participant correspondant à la caméra avec le même id
                 "size" : zone_size,
                 "color" : self.objects['camera_'+name]["color"],
                 "shape" : {'(0,1)': 'rectangle', '(0,2)': 'rectangle', '(1,2)': 'rectangle'},
@@ -162,4 +182,6 @@ class RoomConfiguration():
         y = np.sin(angle_y)
         z = -np.cos(angle_y) * np.cos(angle_x)
         return np.array([x, y, z])        
+
+    
    

@@ -62,5 +62,5 @@ class Participant():
       writer = csv.writer(csvfile)
       writer.writerow(header)
       for i in range(len(self.head_position)):
-        line = self.head_position[i] + self.gaze_vector[i] + [self.targets[i]]
+        line = list(map(str, self.head_position[i])) + list(map(str, self.gaze_vector[i])) + [str(self.targets[i])]
         writer.writerow(line)
