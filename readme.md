@@ -3,6 +3,20 @@
 ## Installation
 Dependencies : ptgaze, opencv, torch (cuda supported), omegaconf
 
+Python 3.9
+python -m pip install --upgrade pip
+pip install --upgrade setuptools wheel
+
+
+```` 
+× Failed to build installable wheels for some pyproject.toml based projects
+╰─> dlib 
+````
+
+pip install cmake
+
+pip install mingus pyfluidsynth
+
 TODO : add installation instructions
 
 ## Architecture Overview

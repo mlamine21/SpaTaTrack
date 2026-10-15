@@ -83,6 +83,27 @@
             "color": "None",  
             "shape" : "{'(0;1)': 'rectangle', '(0;2)': 'rectangle', '(1;2)': 'rectangle'}",
             "angle" : "[0,0,0]"
+        },
+        "box1_interaction":{
+            "position":"[-0.2, -$scene[size][1]/2+$objects[table][size][1]+$objects[box1_interaction][size][1]/2, 0]",
+            "size":"[0.1, 0.1, 0.1]",
+            "color":"(255, 0, 0)",
+            "shape":"{'(0;1)': 'rectangle', '(0;2)': 'rectangle', '(1;2)': 'rectangle'}",
+            "angle" : "[0,0,0]"
+        },
+        "box2_interaction":{
+            "position":"[0.2, -$scene[size][1]/2+$objects[table][size][1]+$objects[box2_interaction][size][1]/2, 0]",
+            "size":"[0.1, 0.1, 0.1]",
+            "color":"(0, 255, 0)",
+            "shape":"{'(0;1)': 'rectangle', '(0;2)': 'rectangle', '(1;2)': 'rectangle'}",
+            "angle" : "[0,0,0]"
+        },
+        "box3_interaction":{
+            "position":"[0, -$scene[size][1]/2+$objects[table][size][1]+$objects[box3_interaction][size][1]/2, 0]",
+            "size":"[0.1, 0.1, 0.1]",
+            "color":"(0, 0, 255)",
+            "shape":"{'(0;1)': 'rectangle', '(0;2)': 'rectangle', '(1;2)': 'rectangle'}",
+            "angle" : "[0,0,0]"
         }
     }
     

@@ -4,7 +4,7 @@ import sys
 from mingus.midi import midi_file_in
 from mingus.midi import fluidsynth
 import threading
-from  mingus.containers.instrument import MidiInstrument
+from mingus.containers.instrument import MidiInstrument
 
 
 class LoopThread(threading.Thread):
@@ -28,12 +28,12 @@ class LoopThread(threading.Thread):
 # sfid = fs.sfload(r'FluidR3_GM.sf2')  # replace path as needed
 # fs.program_select(0, sfid, 0, 0)
 # fs.start(driver = 'dsound')  # use DirectSound driver
-fluidsynth.init('GeneralUser-GS.sf2', 'dsound')  # replace path as needed
+fluidsynth.init('FluidR3_GM.sf2', 'dsound')  # replace path as needed
 
 print("Synthesizer started")
 
 
-composition, bpm = midi_file_in.MIDI_to_Composition("The-Final-Countdown.mid")
+composition, bpm = midi_file_in.MIDI_to_Composition("Canon_In_D.mid")
 print("MIDI file loaded, BPM:", bpm)
 print("Number of tracks:", len(composition.tracks))
 print("Title : ", composition.title)
@@ -56,7 +56,7 @@ names = {t.name : t.name+"_"+str(i) for i, t in enumerate(composition.tracks)}
 print(names)
 length_max=1
 notes_length = 1
-# notes_length = 1/bar.meter[0]
+notes_length = 1/4
 #Decompose each track into bars then bars into 1/4 bars (beats) and store them in a list of lists
 for track in composition.tracks:
     for bar in track:

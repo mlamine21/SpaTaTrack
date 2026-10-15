@@ -93,6 +93,9 @@ for gp in gaze_processors.values():
 highlighted = False
 
 frame_count = 0
+
+
+
 start_time = time.time()
 while getState(gaze_processors)!=False:
     curr_time = time.time()
@@ -135,8 +138,11 @@ while getState(gaze_processors)!=False:
         participants[i].updateTargets(target)
     
     participants.append(Participant(id="dummy", head_position=[1,2,3], gaze_vector=[1,2,3]))
-    participants[-1].targets.append("screen")  # Add a participant for "autre" target
-
+    elapsed = curr_time - start_time
+    if(elapsed<3):
+        participants[-1].targets.append("screen")  # Add a participant for "screen" target
+    elif(elapsed>3 and elapsed<6):
+        participants[-1].targets.append("table")  # Add a participant for "table" target
     ################################
     # Check if all participants are looking at the same target
     

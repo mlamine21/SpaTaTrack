@@ -1,10 +1,10 @@
 mode: ETH-XGaze
-device: cuda
+device: cpu
 model:
   name: resnet18
 face_detector:
   mode: mediapipe
-  dlib_model_path: ~/.ptgaze/dlib/shape_predictor_68_face_landmarks.dat
+  mediapipe_model_path: ~/.ptgaze/mediapipe/face_landmarker.task
   mediapipe_max_num_faces: 1
   mediapipe_static_image_mode: false
 gaze_estimator:

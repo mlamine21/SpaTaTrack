@@ -2,14 +2,14 @@ import os
 import warnings
 
 # Suppress TensorFlow warnings
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
-warnings.filterwarnings("ignore", category=UserWarning, module="tensorflow")
-warnings.simplefilter(action='ignore', category=FutureWarning)
+# os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+# warnings.filterwarnings("ignore", category=UserWarning, module="tensorflow")
+# warnings.simplefilter(action='ignore', category=FutureWarning)
 
 from threading import Thread
+from networkx import config
 import numpy as np
 from omegaconf import OmegaConf
-from ptgaze.gaze_estimator import GazeEstimator
 import sys
 from fileVideoStream import FileVideoStream
 import warnings
@@ -17,7 +17,20 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 import pandas as pd
 import cv2
 import time
+import pathlib
+from ptgaze.gaze_estimator import GazeEstimator, GazeEstimationMode
+from ptgaze.config_schema import AppConfig
 
+from ptgaze.utils import (
+    check_path_all,
+    download_dlib_pretrained_model,
+    download_ethxgaze_model,
+    download_mediapipe_face_landmarker,
+    download_mpiifacegaze_model,
+    download_mpiigaze_model,
+    expanduser_all,
+    set_dummy_camera_params,
+)
 
 class GazeProcessor(Thread):
     def __init__(self, stream, save_csv=False, csv_filename=None):
@@ -36,15 +49,33 @@ class GazeProcessor(Thread):
         self.last_frame = None
         self.isRunning = False
     def initGazeEstimator(self):
-         # Resolve np problems
-        # https://github.com/drewp/pytorch_mpiigaze_demo/commit/e30d064cbe9f00ed6c8239f2a7cb1ff9d29e9867
         # Temporarily suppress stderr during GazeEstimator instantiation
         original_stderr = sys.stderr
         sys.stderr = open(os.devnull, 'w')
         
         try:
             self.config = OmegaConf.load('eth-xgaze.yaml')
+            self.config = OmegaConf.merge(OmegaConf.structured(AppConfig), self.config)
+            #self.config.PACKAGE_ROOT = "C:\\Users\\mla\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\ptgaze".as_posix()
+            expanduser_all(self.config)
+            # OmegaConf.set_readonly(self.config, True)
+
+            if self.config.face_detector.mode == "dlib":
+                download_dlib_pretrained_model()
+            if self.config.face_detector.mode == "mediapipe":
+                download_mediapipe_face_landmarker()
+
+            check_path_all(self.config)
+            # package_root = pathlib.Path(__file__).parent.resolve()
+            # self.config.PACKAGE_ROOT = package_root.as_posix()
+
+            # self.config.face_detector.mode = "mediapipe"
+            # self.config.device = "cpu"
+            checkpoint_path = download_ethxgaze_model()
+            self.config.gaze_estimator.checkpoint = checkpoint_path.as_posix()
+            self.mode = GazeEstimationMode(self.config.mode)
             self.gaze_estimator = GazeEstimator(self.config)  # Warning occurs here
+            
         finally:
             # Always restore stderr
             sys.stderr.close()
