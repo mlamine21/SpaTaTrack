@@ -287,3 +287,47 @@ finally:
         monitor_thread.join(timeout=1.0)
     except Exception:
         pass
+
+
+
+
+# GUI instance creation
+
+# joint_gaze_hero = JointGazeHero(...) — this constructs the GUI and appears right after the gaze processors are started.
+# GUI → monitor (GUI asks for input)
+
+# def on_request_input(index): — callback defined in the script (sets monitor_state["expected_name"] / expected_index).
+# joint_gaze_hero.on_request_input = on_request_input — wires the GUI to that callback. (These are grouped together immediately after creating joint_gaze_hero.)
+# Monitor state used to coordinate reporting
+
+# monitor_state = { "expected_name": ..., "first_seen": ..., "reported": ..., "running": ... } — defined right after the GUI creation.
+# Background consensus monitor (reads participants → reports success to GUI)
+
+# def consensus_monitor(): — the monitor loop that:
+# collects current targets from participants (targets.append(p.targets[-1])),
+# computes the majority (counter = Counter(targets)),
+# checks stability for stable_required (0.5s),
+# when validated it schedules a GUI-thread action with joint_gaze_hero.root.after(0, report_success_on_gui).
+# monitor_thread = threading.Thread(target=consensus_monitor, daemon=True) and monitor_thread.start() start it.
+# Report success back to GUI (runs on GUI thread)
+
+# def report_success_on_gui(): — runs on the Tk main thread (scheduled by root.after), it:
+# visually marks the square green (frame.config(...)),
+# plays the optional success sound hook,
+# calls joint_gaze_hero.on_input_result(True) to let the GUI advance.
+# Gaze processing → participants (supply targets for the monitor)
+
+# In gaze_processing_loop() you update each participant’s target:
+# participants[i].updateTargets(target) — this is where new per-frame target info is written; the monitor reads p.targets[-1].
+# processing_thread = threading.Thread(target=gaze_processing_loop, daemon=True) starts that loop.
+# Mainloop & shutdown
+
+# joint_gaze_hero.run() — runs Tk mainloop on the main thread (GUI must be on main thread).
+# On exit the script sets monitor_state["running"] = False and signals exit_event so monitor/processing threads stop.
+# Summary of the flow
+
+# GUI highlights a square and calls on_request_input(index) (set on the GUI instance).
+# monitor_state records the expected object name.
+# gaze_processing_loop keeps updating participants[i].targets.
+# consensus_monitor samples participants repeatedly; when consensus equals expected name for >= 0.5s it schedules report_success_on_gui on the GUI thread.
+# report_success_on_gui calls joint_gaze_hero.on_input_result(True) so the GUI advances.
